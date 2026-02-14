@@ -1,0 +1,54 @@
+# Spark Configuration
+
+spark:
+  app_name: "IAR-BigData-Platform"
+  master: "local[*]"
+  
+  # Memory Configuration
+  driver:
+    memory: "4g"
+    maxResultSize: "2g"
+  
+  executor:
+    memory: "4g"
+    cores: 2
+    instances: 2
+  
+  # Shuffle and Partitioning
+  sql:
+    shuffle:
+      partitions: 200
+    adaptive:
+      enabled: true
+      coalescePartitions:
+        enabled: true
+  
+  # Serialization
+  serializer: "org.apache.spark.serializer.KryoSerializer"
+  kryoserializer:
+    buffer:
+      max: "512m"
+  
+  # Performance
+  default:
+    parallelism: 200
+  
+  # UI and Monitoring
+  ui:
+    enabled: true
+    port: 4040
+  
+  # Compression
+  io:
+    compression:
+      codec: "snappy"
+  
+  # Logging
+  log:
+    level: "WARN"
+  
+  # Dynamic Allocation (optional)
+  dynamicAllocation:
+    enabled: false
+    minExecutors: 1
+    maxExecutors: 4

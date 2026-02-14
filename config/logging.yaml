@@ -1,0 +1,71 @@
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  standard:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+  
+  detailed:
+    format: '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+  
+  file_feeder:
+    class: logging.FileHandler
+    level: INFO
+    formatter: detailed
+    filename: logs/feeder.txt
+    mode: a
+  
+  file_processor:
+    class: logging.FileHandler
+    level: INFO
+    formatter: detailed
+    filename: logs/processor.txt
+    mode: a
+  
+  file_datamart:
+    class: logging.FileHandler
+    level: INFO
+    formatter: detailed
+    filename: logs/datamart.txt
+    mode: a
+  
+  file_api:
+    class: logging.FileHandler
+    level: INFO
+    formatter: detailed
+    filename: logs/api.txt
+    mode: a
+
+loggers:
+  feeder:
+    level: INFO
+    handlers: [console, file_feeder]
+    propagate: false
+  
+  processor:
+    level: INFO
+    handlers: [console, file_processor]
+    propagate: false
+  
+  datamart:
+    level: INFO
+    handlers: [console, file_datamart]
+    propagate: false
+  
+  api:
+    level: INFO
+    handlers: [console, file_api]
+    propagate: false
+
+root:
+  level: INFO
+  handlers: [console]

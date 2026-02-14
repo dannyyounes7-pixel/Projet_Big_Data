@@ -1,0 +1,40 @@
+# Big Data Processing
+pyspark==3.5.0
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.2
+openpyxl==3.1.2
+
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+
+# API Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Authentication
+pyjwt==2.8.0
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+
+# Configuration
+pyyaml==6.0.1
+python-dotenv==1.0.0
+
+# Visualization
+streamlit==1.30.0
+plotly==5.18.0
+matplotlib==3.8.2
+seaborn==0.13.1
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Development
+pytest==7.4.3
+black==23.12.1
+flake8==7.0.0

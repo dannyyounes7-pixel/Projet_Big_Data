@@ -1,0 +1,60 @@
+# API Configuration
+
+# Server Settings
+server:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true
+  workers: 4
+
+# JWT Authentication
+jwt:
+  secret_key: "your-secret-key-change-this-in-production-use-openssl-rand-hex-32"
+  algorithm: "HS256"
+  access_token_expire_minutes: 60
+
+# Default Users (for demo - use proper auth in production)
+users:
+  - username: "admin"
+    password: "admin123"  # This should be hashed in production
+    email: "admin@iar-platform.fr"
+  - username: "analyst"
+    password: "analyst123"
+    email: "analyst@iar-platform.fr"
+
+# Pagination Defaults
+pagination:
+  default_page_size: 50
+  max_page_size: 1000
+  default_page: 1
+
+# Database Connection
+database:
+  url: "postgresql://postgres:postgres@localhost:5432/iar_db"
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+  pool_recycle: 3600
+
+# CORS Settings
+cors:
+  allow_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8501"  # Streamlit default port
+  allow_credentials: true
+  allow_methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+  allow_headers:
+    - "*"
+
+# API Documentation
+docs:
+  title: "IAR Platform API"
+  description: "API pour consulter l'Indice d'Attractivité Rationnelle des communes françaises"
+  version: "1.0.0"
+  contact:
+    name: "IAR Platform Team"
+    email: "contact@iar-platform.fr"

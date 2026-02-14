@@ -1,0 +1,51 @@
+# Application Configuration
+
+# Data Lake Paths
+data_lake:
+  base_path: "data_lake"
+  raw:
+    dvf: "data_lake/raw/dvf"
+    bpe: "data_lake/raw/bpe"
+    ref_communes: "data_lake/raw/ref_communes"
+  silver:
+    dvf: "data_lake/silver/dvf"
+    bpe: "data_lake/silver/bpe"
+    joined: "data_lake/silver/joined"
+  gold:
+    path: "data_lake/gold"
+
+# Source Data Files
+source_data:
+  dvf_file: "full.xlsx"
+  bpe_file: "document BPE24.xlsx"
+  communes_file: "v_commune_2024.csv"
+
+# Database Configuration
+database:
+  host: "localhost"
+  port: 5432
+  name: "iar_db"
+  user: "postgres"
+  password: "postgres"
+  connection_string: "postgresql://postgres:postgres@localhost:5432/iar_db"
+
+# Processing Options
+processing:
+  # Outlier removal percentiles
+  prix_m2_min_percentile: 1
+  prix_m2_max_percentile: 99
+  
+  # Validation thresholds
+  min_valeur_fonciere: 0
+  min_surface_bati: 0
+  min_nb_pieces: 0
+  
+  # IAR Formula weights
+  iar_services_weight: 0.7
+  iar_price_weight: 0.3
+
+# Logging
+logging:
+  level: "INFO"
+  log_dir: "logs"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
