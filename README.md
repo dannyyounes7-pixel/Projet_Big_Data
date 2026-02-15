@@ -186,6 +186,8 @@ Le dashboard Streamlit propose :
 
 ## Auteurs
 
+**Nawfel Chakib Younes** et **Yacine Bakour**
+
 Projet Big Data Framework - IAR Platform
 
 ## Licence

@@ -274,3 +274,11 @@ La plateforme IAR répond à un besoin réel du marché en fournissant une analy
 - **Facilité d'accès** : API et dashboard pour une utilisation simple
 
 **La valeur créée** s'adresse à trois marchés distincts (B2C, B2G, B2B) avec un fort potentiel de monétisation et d'impact social positif en facilitant les meilleures décisions d'installation résidentielle.
+
+---
+
+## Auteurs
+
+**Nawfel Chakib Younes** et **Yacine Bakour**
+
+Projet Big Data Framework - IAR Platform

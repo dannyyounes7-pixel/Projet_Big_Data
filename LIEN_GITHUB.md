@@ -4,16 +4,6 @@
 
 **URL du projet** : https://github.com/dannyyounes7-pixel/Projet_Big_Data
 
----
-
-## Instructions pour le Professeur
-
-### Cloner le Projet
-
-```bash
-git clone https://github.com/dannyyounes7-pixel/Projet_Big_Data.git
-cd Projet_Big_Data
-```
 
 ### Documentation Disponible
 
@@ -108,8 +98,13 @@ streamlit run viz/dashboard.py
 
 ---
 
+## Auteurs
+
+**Nawfel Chakib Younes** et **Yacine Bakour**
+
+---
+
 ## Contact
 
-**Auteur** : Danny Younes  
 **GitHub** : https://github.com/dannyyounes7-pixel  
 **Dépôt** : https://github.com/dannyyounes7-pixel/Projet_Big_Data
