@@ -1,0 +1,33 @@
+═══════════════════════════════════════════════════════════════
+  LIEN DU DÉPÔT GITHUB - PROJET BIG DATA IAR PLATFORM
+═══════════════════════════════════════════════════════════════
+
+🔗 LIEN GITHUB :
+https://github.com/dannyyounes7-pixel/Projet_Big_Data
+
+───────────────────────────────────────────────────────────────
+
+📋 INSTRUCTIONS POUR LE PROFESSEUR :
+
+1. Cliquer sur le lien ci-dessus pour accéder au dépôt GitHub
+
+2. Consulter le fichier GUIDE_LANCEMENT_COMPLET.md pour les 
+   instructions détaillées de lancement du projet
+
+3. Le README.md contient une vue d'ensemble du projet
+
+───────────────────────────────────────────────────────────────
+
+📂 CONTENU DU PROJET :
+
+✓ Pipeline Big Data complet (RAW → SILVER → GOLD)
+✓ API REST sécurisée avec JWT
+✓ Dashboard de visualisation Streamlit
+✓ Documentation complète
+✓ Scripts d'automatisation
+
+───────────────────────────────────────────────────────────────
+
+📅 Dernière mise à jour : 15 février 2026
+
+═══════════════════════════════════════════════════════════════

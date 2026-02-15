@@ -1,5 +1,9 @@
 ﻿# Big Data IAR Platform - Indice d'Attractivité Rationnelle
 
+[![GitHub](https://img.shields.io/badge/GitHub-Projet_Big_Data-blue?logo=github)](https://github.com/dannyyounes7-pixel/Projet_Big_Data)
+
+> **🔗 Dépôt GitHub** : [https://github.com/dannyyounes7-pixel/Projet_Big_Data](https://github.com/dannyyounes7-pixel/Projet_Big_Data)
+
 Plateforme Big Data pour analyser les communes françaises et identifier celles offrant le meilleur rapport **services de proximité / prix immobilier**.
 
 ## Objectif
