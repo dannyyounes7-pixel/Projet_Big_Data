@@ -1,17 +1,17 @@
-# Guide Complet de Lancement - IAR Platform
+﻿# Guide Complet de Lancement - IAR Platform
 
-## 📋 Table des Matières
+##  Table des Matires
 
 1. [Vue d'ensemble du Projet](#vue-densemble-du-projet)
-2. [Prérequis et Installation](#prérequis-et-installation)
+2. [Prrequis et Installation](#prrequis-et-installation)
 3. [Configuration de l'Environnement](#configuration-de-lenvironnement)
-4. [Préparation des Données](#préparation-des-données)
-5. [Exécution du Pipeline Big Data](#exécution-du-pipeline-big-data)
+4. [Prparation des Donnes](#prparation-des-donnes)
+5. [Excution du Pipeline Big Data](#excution-du-pipeline-big-data)
 6. [Lancement de l'API REST](#lancement-de-lapi-rest)
 7. [Connexion et Utilisation de l'API](#connexion-et-utilisation-de-lapi)
-8. [Utilisation des Données](#utilisation-des-données)
+8. [Utilisation des Donnes](#utilisation-des-donnes)
 9. [Lancement du Dashboard](#lancement-du-dashboard)
-10. [Vérification et Dépannage](#vérification-et-dépannage)
+10. [Vrification et Dpannage](#vrification-et-dpannage)
 
 ---
 
@@ -19,63 +19,63 @@
 
 ### Qu'est-ce que la plateforme IAR ?
 
-La plateforme IAR (Indice d'Attractivité Rationnelle) est une solution Big Data qui analyse les communes françaises pour identifier celles offrant le meilleur rapport **services de proximité / prix immobilier**.
+La plateforme IAR (Indice d'Attractivit Rationnelle) est une solution Big Data qui analyse les communes franaises pour identifier celles offrant le meilleur rapport **services de proximit / prix immobilier**.
 
 ### Architecture du Projet
 
 ```
-┌─────────────────┐
-│  Données Source │  (DVF 2024 + BPE 2024 + Communes)
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│   RAW Layer     │  (Données brutes en Parquet)
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│  SILVER Layer   │  (Données nettoyées et enrichies)
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│   GOLD Layer    │  (Datamarts PostgreSQL)
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│   API REST      │  (FastAPI + JWT)
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│  Visualisation  │  (Dashboard Streamlit)
-└─────────────────┘
+
+  Donnes Source   (DVF 2024 + BPE 2024 + Communes)
+
+         
+
+   RAW Layer       (Donnes brutes en Parquet)
+
+         
+
+  SILVER Layer     (Donnes nettoyes et enrichies)
+
+         
+
+   GOLD Layer      (Datamarts PostgreSQL)
+
+         
+
+   API REST        (FastAPI + JWT)
+
+         
+
+  Visualisation    (Dashboard Streamlit)
+
 ```
 
 ### Formule IAR
 
 ```
-IAR = 0.7 × services_normalisés + 0.3 × (1 - prix_normalisés)
+IAR = 0.7  services_normaliss + 0.3  (1 - prix_normaliss)
 ```
 
-- **IAR proche de 1** : Commune très attractive (nombreux services, prix raisonnables)
-- **IAR proche de 0** : Commune moins attractive (peu de services ou prix élevés)
+- **IAR proche de 1** : Commune trs attractive (nombreux services, prix raisonnables)
+- **IAR proche de 0** : Commune moins attractive (peu de services ou prix levs)
 
 ---
 
-## 2. Prérequis et Installation
+## 2. Prrequis et Installation
 
-### 2.1 Vérifier les Prérequis
+### 2.1 Vrifier les Prrequis
 
-Avant de commencer, vous devez avoir installé :
+Avant de commencer, vous devez avoir install :
 
 #### Python 3.9+
 
 ```powershell
-# Vérifier la version de Python
+# Vrifier la version de Python
 python --version
 ```
 
-**Résultat attendu** : `Python 3.9.x` ou supérieur
+**Rsultat attendu** : `Python 3.9.x` ou suprieur
 
-Si Python n'est pas installé :
+Si Python n'est pas install :
 ```powershell
 # Installer Python avec winget
 winget install Python.Python.3.11
@@ -84,13 +84,13 @@ winget install Python.Python.3.11
 #### Java 8+
 
 ```powershell
-# Vérifier la version de Java
+# Vrifier la version de Java
 java -version
 ```
 
-**Résultat attendu** : `java version "1.8.x"` ou supérieur
+**Rsultat attendu** : `java version "1.8.x"` ou suprieur
 
-Si Java n'est pas installé :
+Si Java n'est pas install :
 ```powershell
 # Installer Java avec winget
 winget install Oracle.JDK.17
@@ -99,40 +99,40 @@ winget install Oracle.JDK.17
 #### PostgreSQL 13+
 
 ```powershell
-# Vérifier PostgreSQL
+# Vrifier PostgreSQL
 psql --version
 ```
 
-**Résultat attendu** : `psql (PostgreSQL) 13.x` ou supérieur
+**Rsultat attendu** : `psql (PostgreSQL) 13.x` ou suprieur
 
-Si PostgreSQL n'est pas installé :
+Si PostgreSQL n'est pas install :
 ```powershell
 # Installer PostgreSQL avec winget
 winget install PostgreSQL.PostgreSQL
 ```
 
-### 2.2 Installer les Dépendances Python
+### 2.2 Installer les Dpendances Python
 
 ```powershell
-# Naviguer vers le répertoire du projet
-cd "c:\Users\33601\Desktop\Projetèfinal"
+# Naviguer vers le rpertoire du projet
+cd "c:\Users\33601\Desktop\Projetfinal"
 
-# Créer un environnement virtuel
+# Crer un environnement virtuel
 python -m venv venv
 
 # Activer l'environnement virtuel
 venv\Scripts\activate
 
-# Mettre à jour pip
+# Mettre  jour pip
 python -m pip install --upgrade pip
 
-# Installer toutes les dépendances
+# Installer toutes les dpendances
 pip install -r requirements.txt
 ```
 
-**Résultat attendu** : Installation réussie de tous les packages sans erreurs.
+**Rsultat attendu** : Installation russie de tous les packages sans erreurs.
 
-**Packages installés** :
+**Packages installs** :
 - `pyspark==3.5.0` - Traitement Big Data
 - `fastapi==0.109.0` - Framework API
 - `streamlit==1.30.0` - Dashboard
@@ -145,40 +145,40 @@ pip install -r requirements.txt
 
 ### 3.1 Configurer PostgreSQL
 
-#### Étape 1 : Créer la base de données
+#### tape 1 : Crer la base de donnes
 
 ```powershell
-# Se connecter à PostgreSQL
+# Se connecter  PostgreSQL
 psql -U postgres
 
-# Dans psql, créer la base de données
+# Dans psql, crer la base de donnes
 CREATE DATABASE iar_db;
 
-# Vérifier la création
+# Vrifier la cration
 \l
 
 # Quitter psql
 \q
 ```
 
-**Résultat attendu** : La base `iar_db` apparaît dans la liste des bases de données.
+**Rsultat attendu** : La base `iar_db` apparat dans la liste des bases de donnes.
 
-#### Étape 2 : Initialiser les tables
+#### tape 2 : Initialiser les tables
 
 ```powershell
-# Exécuter le script d'initialisation
+# Excuter le script d'initialisation
 psql -U postgres -d iar_db -f src\sql\create_tables.sql
 ```
 
-**Résultat attendu** : Messages de création des tables :
+**Rsultat attendu** : Messages de cration des tables :
 - `CREATE TABLE dm_commune_iar`
 - `CREATE TABLE dm_departement_stats`
 - `CREATE TABLE dm_region_stats`
 
-#### Étape 3 : Vérifier les tables
+#### tape 3 : Vrifier les tables
 
 ```powershell
-# Se connecter à la base iar_db
+# Se connecter  la base iar_db
 psql -U postgres -d iar_db
 
 # Lister les tables
@@ -188,101 +188,101 @@ psql -U postgres -d iar_db
 \q
 ```
 
-**Résultat attendu** : Vous devriez voir 3 tables listées.
+**Rsultat attendu** : Vous devriez voir 3 tables listes.
 
 ### 3.2 Configurer les Fichiers de Configuration
 
-Les fichiers de configuration sont déjà prêts dans le dossier `config/` :
+Les fichiers de configuration sont dj prts dans le dossier `config/` :
 
 #### `config/app.yaml`
 - Chemins du Data Lake
-- Configuration de la base de données
+- Configuration de la base de donnes
 - Poids de la formule IAR (70% services, 30% prix)
 
 #### `config/api.yaml`
 - Configuration du serveur API
-- Paramètres JWT
+- Paramtres JWT
 - CORS
 
 #### `config/spark.yaml`
-- Mémoire allouée à Spark
+- Mmoire alloue  Spark
 - Nombre de partitions
 
-**Vérification** :
+**Vrification** :
 ```powershell
-# Vérifier que les fichiers existent
+# Vrifier que les fichiers existent
 dir config\*.yaml
 ```
 
 ---
 
-## 4. Préparation des Données
+## 4. Prparation des Donnes
 
-### 4.1 Vérifier les Fichiers de Données
+### 4.1 Vrifier les Fichiers de Donnes
 
-Les fichiers suivants doivent être présents à la racine du projet :
+Les fichiers suivants doivent tre prsents  la racine du projet :
 
 ```powershell
-# Vérifier les fichiers
+# Vrifier les fichiers
 dir *.xlsx
 dir *.csv
 ```
 
 **Fichiers requis** :
-1. `full.xlsx` (environ 43 MB) - Données DVF 2024 (transactions immobilières)
-2. `document BPE24.xlsx` (environ 378 MB) - Données BPE 2024 (équipements)
-3. `v_commune_2024.csv` (environ 3.5 MB) - Référentiel des communes
+1. `full.xlsx` (environ 43 MB) - Donnes DVF 2024 (transactions immobilires)
+2. `document BPE24.xlsx` (environ 378 MB) - Donnes BPE 2024 (quipements)
+3. `v_commune_2024.csv` (environ 3.5 MB) - Rfrentiel des communes
 
-**Résultat attendu** : Les 3 fichiers sont présents.
+**Rsultat attendu** : Les 3 fichiers sont prsents.
 
-### 4.2 Structure des Données
+### 4.2 Structure des Donnes
 
 #### DVF 2024 (`full.xlsx`)
-Contient les transactions immobilières :
+Contient les transactions immobilires :
 - `code_commune` : Code INSEE de la commune
 - `valeur_fonciere` : Prix de vente en euros
-- `surface_reelle_bati` : Surface en m²
-- `nombre_pieces_principales` : Nombre de pièces
+- `surface_reelle_bati` : Surface en m
+- `nombre_pieces_principales` : Nombre de pices
 - `date_mutation` : Date de la transaction
 
 #### BPE 2024 (`document BPE24.xlsx`)
-Contient les équipements de proximité :
+Contient les quipements de proximit :
 - `DEPCOM` : Code INSEE de la commune
-- `TYPEQU` : Type d'équipement (école, médecin, commerce, etc.)
-- Environ 200 types d'équipements différents
+- `TYPEQU` : Type d'quipement (cole, mdecin, commerce, etc.)
+- Environ 200 types d'quipements diffrents
 
 #### Communes (`v_commune_2024.csv`)
-Référentiel des communes :
+Rfrentiel des communes :
 - `code_commune` : Code INSEE
 - `nom_commune` : Nom de la commune
-- `code_departement` : Code du département
-- `nom_departement` : Nom du département
-- `code_region` : Code de la région
+- `code_departement` : Code du dpartement
+- `nom_departement` : Nom du dpartement
+- `code_region` : Code de la rgion
 
 ---
 
-## 5. Exécution du Pipeline Big Data
+## 5. Excution du Pipeline Big Data
 
-Le pipeline se compose de 3 étapes principales qui transforment les données brutes en datamarts exploitables.
+Le pipeline se compose de 3 tapes principales qui transforment les donnes brutes en datamarts exploitables.
 
-### 5.1 Étape 1 : RAW Layer (Feeder)
+### 5.1 tape 1 : RAW Layer (Feeder)
 
-Cette étape charge les données sources et les convertit en format Parquet.
+Cette tape charge les donnes sources et les convertit en format Parquet.
 
 ```powershell
-# Exécuter le feeder
+# Excuter le feeder
 scripts\run_feeder.bat
 ```
 
 **Ce qui se passe** :
 1. Lecture des fichiers Excel et CSV
 2. Conversion en format Parquet (compression Snappy)
-3. Partitionnement par date d'exécution
+3. Partitionnement par date d'excution
 4. Sauvegarde dans `data_lake/raw/`
 
-**Durée estimée** : 5-10 minutes
+**Dure estime** : 5-10 minutes
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```
 ==========================================
 Starting RAW Layer Feeder
@@ -296,42 +296,42 @@ Starting RAW Layer Feeder
 [SUCCESS] Feeder completed successfully!
 ```
 
-**Vérification** :
+**Vrification** :
 ```powershell
-# Vérifier la création du Data Lake
+# Vrifier la cration du Data Lake
 dir data_lake\raw\
 ```
 
 Vous devriez voir 3 dossiers : `dvf`, `bpe`, `ref_communes`
 
-### 5.2 Étape 2 : SILVER Layer (Processor)
+### 5.2 tape 2 : SILVER Layer (Processor)
 
-Cette étape nettoie, valide et enrichit les données.
+Cette tape nettoie, valide et enrichit les donnes.
 
 ```powershell
-# Exécuter le processor
+# Excuter le processor
 scripts\run_processor.bat
 ```
 
 **Ce qui se passe** :
 1. **DVF** :
    - Filtrage des transactions valides (maisons et appartements)
-   - Calcul du prix au m²
+   - Calcul du prix au m
    - Suppression des outliers (1er et 99e percentile)
-   - Calcul du prix médian par commune
+   - Calcul du prix mdian par commune
 
 2. **BPE** :
-   - Comptage des équipements par commune
-   - Calcul de la densité de services
+   - Comptage des quipements par commune
+   - Calcul de la densit de services
 
 3. **Jointure** :
    - Fusion DVF + BPE + Communes
    - Normalisation des valeurs (0-1)
    - Calcul de l'IAR
 
-**Durée estimée** : 10-20 minutes
+**Dure estime** : 10-20 minutes
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```
 ==========================================
 Starting SILVER Layer Processor
@@ -348,32 +348,32 @@ Starting SILVER Layer Processor
 [SUCCESS] Processor completed successfully!
 ```
 
-**Vérification** :
+**Vrification** :
 ```powershell
-# Vérifier les données SILVER
+# Vrifier les donnes SILVER
 dir data_lake\silver\joined\
 ```
 
-### 5.3 Étape 3 : GOLD Layer (Datamart)
+### 5.3 tape 3 : GOLD Layer (Datamart)
 
-Cette étape charge les données finales dans PostgreSQL.
+Cette tape charge les donnes finales dans PostgreSQL.
 
 ```powershell
-# Exécuter le datamart
+# Excuter le datamart
 scripts\run_datamart.bat
 ```
 
 **Ce qui se passe** :
-1. Lecture des données SILVER
-2. Création de 3 datamarts :
-   - `dm_commune_iar` : Données par commune
-   - `dm_departement_stats` : Statistiques par département
-   - `dm_region_stats` : Statistiques par région
+1. Lecture des donnes SILVER
+2. Cration de 3 datamarts :
+   - `dm_commune_iar` : Donnes par commune
+   - `dm_departement_stats` : Statistiques par dpartement
+   - `dm_region_stats` : Statistiques par rgion
 3. Chargement dans PostgreSQL
 
-**Durée estimée** : 5-10 minutes
+**Dure estime** : 5-10 minutes
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```
 ==========================================
 Starting GOLD Layer Datamart
@@ -386,9 +386,9 @@ Starting GOLD Layer Datamart
 [SUCCESS] Datamart completed successfully!
 ```
 
-**Vérification** :
+**Vrification** :
 ```powershell
-# Se connecter à PostgreSQL
+# Se connecter  PostgreSQL
 psql -U postgres -d iar_db
 
 # Compter les communes
@@ -404,37 +404,37 @@ LIMIT 10;
 \q
 ```
 
-**Résultat attendu** : Plusieurs milliers de communes dans la table.
+**Rsultat attendu** : Plusieurs milliers de communes dans la table.
 
 ### 5.4 Pipeline Complet (Optionnel)
 
-Pour exécuter les 3 étapes d'un coup :
+Pour excuter les 3 tapes d'un coup :
 
 ```powershell
-# Exécuter le pipeline complet (Linux/Mac uniquement)
-# Sur Windows, exécuter les 3 scripts séparément
+# Excuter le pipeline complet (Linux/Mac uniquement)
+# Sur Windows, excuter les 3 scripts sparment
 ```
 
 ---
 
 ## 6. Lancement de l'API REST
 
-### 6.1 Démarrer l'API
+### 6.1 Dmarrer l'API
 
 ```powershell
-# Méthode 1 : Utiliser le script
+# Mthode 1 : Utiliser le script
 scripts\run_api.bat
 
-# Méthode 2 : Commande directe
+# Mthode 2 : Commande directe
 python -m uvicorn api.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```
 ==========================================
 Starting IAR Platform API
 ==========================================
-INFO:     Will watch for changes in these directories: ['c:\\Users\\33601\\Desktop\\Projetèfinal']
+INFO:     Will watch for changes in these directories: ['c:\\Users\\33601\\Desktop\\Projetfinal']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 INFO:     Started reloader process [12345] using StatReload
 INFO:     Started server process [12346]
@@ -442,37 +442,37 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ```
 
-### 6.2 Vérifier l'API
+### 6.2 Vrifier l'API
 
-Ouvrir un navigateur et accéder à :
+Ouvrir un navigateur et accder  :
 
 #### Page d'accueil de l'API
 ```
 http://localhost:8000
 ```
 
-**Résultat attendu** : JSON avec les informations de l'API
+**Rsultat attendu** : JSON avec les informations de l'API
 
 #### Documentation Swagger (Interactive)
 ```
 http://localhost:8000/docs
 ```
 
-**Résultat attendu** : Interface Swagger UI avec tous les endpoints
+**Rsultat attendu** : Interface Swagger UI avec tous les endpoints
 
 #### Documentation ReDoc
 ```
 http://localhost:8000/redoc
 ```
 
-**Résultat attendu** : Documentation alternative en format ReDoc
+**Rsultat attendu** : Documentation alternative en format ReDoc
 
 #### Health Check
 ```
 http://localhost:8000/health
 ```
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```json
 {
   "status": "healthy",
@@ -487,20 +487,20 @@ http://localhost:8000/health
 
 ### 7.1 Authentification JWT
 
-L'API utilise JWT (JSON Web Tokens) pour sécuriser les endpoints.
+L'API utilise JWT (JSON Web Tokens) pour scuriser les endpoints.
 
-#### Étape 1 : Obtenir un Token
+#### tape 1 : Obtenir un Token
 
-**Méthode 1 : Avec PowerShell**
+**Mthode 1 : Avec PowerShell**
 
 ```powershell
-# Créer la requête de login
+# Crer la requte de login
 $body = @{
     username = "admin"
     password = "admin123"
 } | ConvertTo-Json
 
-# Envoyer la requête
+# Envoyer la requte
 $response = Invoke-RestMethod -Uri "http://localhost:8000/auth/login" `
     -Method Post `
     -ContentType "application/json" `
@@ -511,7 +511,7 @@ $token = $response.access_token
 Write-Host "Token: $token"
 ```
 
-**Méthode 2 : Avec Swagger UI**
+**Mthode 2 : Avec Swagger UI**
 
 1. Aller sur http://localhost:8000/docs
 2. Cliquer sur `POST /auth/login`
@@ -524,9 +524,9 @@ Write-Host "Token: $token"
    }
    ```
 5. Cliquer sur "Execute"
-6. Copier le `access_token` de la réponse
+6. Copier le `access_token` de la rponse
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -541,33 +541,33 @@ Write-Host "Token: $token"
 | `admin` | `admin123` | Administrateur |
 | `analyst` | `analyst123` | Analyste |
 
-#### Étape 2 : Utiliser le Token
+#### tape 2 : Utiliser le Token
 
 **Dans Swagger UI** :
-1. Cliquer sur le bouton "Authorize" (cadenas) en haut à droite
+1. Cliquer sur le bouton "Authorize" (cadenas) en haut  droite
 2. Entrer : `Bearer <votre_token>`
 3. Cliquer sur "Authorize"
 4. Tous les endpoints sont maintenant accessibles
 
 **Avec PowerShell** :
 ```powershell
-# Créer les headers avec le token
+# Crer les headers avec le token
 $headers = @{
     "Authorization" = "Bearer $token"
 }
 
-# Faire une requête protégée
+# Faire une requte protge
 $communes = Invoke-RestMethod -Uri "http://localhost:8000/communes?page=1&size=10" `
     -Method Get `
     -Headers $headers
 
-# Afficher les résultats
+# Afficher les rsultats
 $communes.data | Format-Table
 ```
 
 ### 7.2 Endpoints Disponibles
 
-#### 🔐 Authentication
+####  Authentication
 
 ##### POST `/auth/login`
 Obtenir un token JWT
@@ -588,16 +588,16 @@ Obtenir un token JWT
 }
 ```
 
-#### 🏘️ Communes
+####  Communes
 
 ##### GET `/communes`
 Lister toutes les communes avec pagination
 
 **Query Parameters** :
-- `page` (int, default=1) : Numéro de page
-- `size` (int, default=50) : Nombre de résultats par page
+- `page` (int, default=1) : Numro de page
+- `size` (int, default=50) : Nombre de rsultats par page
 - `sort` (string) : Tri (`iar_desc`, `iar_asc`, `prix_asc`, `prix_desc`)
-- `dep` (string, optional) : Filtrer par département
+- `dep` (string, optional) : Filtrer par dpartement
 
 **Exemple** :
 ```powershell
@@ -631,36 +631,36 @@ $communes = Invoke-RestMethod -Uri "http://localhost:8000/communes?page=1&size=1
 ```
 
 ##### GET `/communes/{code_commune}`
-Détails d'une commune spécifique
+Dtails d'une commune spcifique
 
 **Exemple** :
 ```powershell
-# Détails de Paris
+# Dtails de Paris
 $paris = Invoke-RestMethod -Uri "http://localhost:8000/communes/75056" `
     -Headers $headers
 ```
 
-#### 🗺️ Départements
+####  Dpartements
 
 ##### GET `/departements/{dep}/top`
-Top N communes d'un département
+Top N communes d'un dpartement
 
 **Query Parameters** :
 - `n` (int, default=10) : Nombre de communes
 
 **Exemple** :
 ```powershell
-# Top 10 communes du département 75 (Paris)
+# Top 10 communes du dpartement 75 (Paris)
 $top = Invoke-RestMethod -Uri "http://localhost:8000/departements/75/top?n=10" `
     -Headers $headers
 ```
 
 ##### GET `/departements/{dep}/stats`
-Statistiques d'un département
+Statistiques d'un dpartement
 
 **Exemple** :
 ```powershell
-# Stats du département 75
+# Stats du dpartement 75
 $stats = Invoke-RestMethod -Uri "http://localhost:8000/departements/75/stats" `
     -Headers $headers
 ```
@@ -677,7 +677,7 @@ $stats = Invoke-RestMethod -Uri "http://localhost:8000/departements/75/stats" `
 }
 ```
 
-#### 📊 Statistiques
+####  Statistiques
 
 ##### GET `/stats/summary`
 Statistiques globales
@@ -704,11 +704,11 @@ $summary = Invoke-RestMethod -Uri "http://localhost:8000/stats/summary" `
 ```
 
 ##### GET `/stats/regions`
-Statistiques par région
+Statistiques par rgion
 
 ---
 
-## 8. Utilisation des Données
+## 8. Utilisation des Donnes
 
 ### 8.1 Exemples avec PowerShell
 
@@ -729,7 +729,7 @@ $response = Invoke-RestMethod -Uri "http://localhost:8000/auth/login" `
 $token = $response.access_token
 $headers = @{ "Authorization" = "Bearer $token" }
 
-# Récupérer le top 20
+# Rcuprer le top 20
 $top20 = Invoke-RestMethod -Uri "http://localhost:8000/communes?page=1&size=20&sort=iar_desc" `
     -Headers $headers
 
@@ -737,21 +737,21 @@ $top20 = Invoke-RestMethod -Uri "http://localhost:8000/communes?page=1&size=20&s
 $top20.data | Select-Object nom_commune, iar, prix_m2_median, nb_services | Format-Table
 ```
 
-#### Exemple 2 : Analyser un Département
+#### Exemple 2 : Analyser un Dpartement
 
 ```powershell
-# Top 10 communes du département 69 (Rhône)
+# Top 10 communes du dpartement 69 (Rhne)
 $rhone = Invoke-RestMethod -Uri "http://localhost:8000/departements/69/top?n=10" `
     -Headers $headers
 
-# Statistiques du département
+# Statistiques du dpartement
 $stats = Invoke-RestMethod -Uri "http://localhost:8000/departements/69/stats" `
     -Headers $headers
 
-Write-Host "Département: $($stats.nom_departement)"
+Write-Host "Dpartement: $($stats.nom_departement)"
 Write-Host "Nombre de communes: $($stats.nb_communes)"
 Write-Host "IAR moyen: $($stats.iar_moyen)"
-Write-Host "Prix m² moyen: $($stats.prix_m2_moyen) €"
+Write-Host "Prix m moyen: $($stats.prix_m2_moyen) "
 ```
 
 #### Exemple 3 : Comparer Plusieurs Communes
@@ -764,7 +764,7 @@ foreach ($code in $codes) {
     $commune = Invoke-RestMethod -Uri "http://localhost:8000/communes/$code" `
         -Headers $headers
     
-    Write-Host "$($commune.nom_commune): IAR=$($commune.iar), Prix=$($commune.prix_m2_median)€/m²"
+    Write-Host "$($commune.nom_commune): IAR=$($commune.iar), Prix=$($commune.prix_m2_median)/m"
 }
 ```
 
@@ -787,7 +787,7 @@ def get_token():
     )
     return response.json()["access_token"]
 
-# 2. Récupérer les données
+# 2. Rcuprer les donnes
 def get_top_communes(token, n=50):
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(
@@ -797,15 +797,15 @@ def get_top_communes(token, n=50):
     )
     return response.json()["data"]
 
-# 3. Analyser les données
+# 3. Analyser les donnes
 def main():
     # Obtenir le token
     token = get_token()
-    print("✓ Authentification réussie")
+    print(" Authentification russie")
     
-    # Récupérer les top 50 communes
+    # Rcuprer les top 50 communes
     communes = get_top_communes(token, n=50)
-    print(f"✓ {len(communes)} communes récupérées")
+    print(f" {len(communes)} communes rcupres")
     
     # Convertir en DataFrame
     df = pd.DataFrame(communes)
@@ -817,28 +817,28 @@ def main():
     # Statistiques globales
     print("\n=== Statistiques ===")
     print(f"IAR moyen: {df['iar'].mean():.3f}")
-    print(f"Prix m² moyen: {df['prix_m2_median'].mean():.0f} €")
+    print(f"Prix m moyen: {df['prix_m2_median'].mean():.0f} ")
     print(f"Services moyen: {df['nb_services'].mean():.0f}")
     
     # Sauvegarder en CSV
     df.to_csv("top_communes.csv", index=False)
-    print("\n✓ Données sauvegardées dans top_communes.csv")
+    print("\n Donnes sauvegardes dans top_communes.csv")
 
 if __name__ == "__main__":
     main()
 ```
 
-**Exécution** :
+**Excution** :
 ```powershell
 python analyse_iar.py
 ```
 
-### 8.3 Exporter les Données
+### 8.3 Exporter les Donnes
 
 #### Exporter en CSV
 
 ```powershell
-# Récupérer toutes les communes et sauvegarder en CSV
+# Rcuprer toutes les communes et sauvegarder en CSV
 $allCommunes = @()
 $page = 1
 $totalPages = 1
@@ -856,21 +856,21 @@ do {
 
 # Exporter en CSV
 $allCommunes | Export-Csv -Path "communes_iar.csv" -NoTypeInformation
-Write-Host "✓ Données exportées dans communes_iar.csv"
+Write-Host " Donnes exportes dans communes_iar.csv"
 ```
 
 ---
 
 ## 9. Lancement du Dashboard
 
-### 9.1 Démarrer le Dashboard Streamlit
+### 9.1 Dmarrer le Dashboard Streamlit
 
 ```powershell
 # Lancer le dashboard
 streamlit run viz\dashboard.py
 ```
 
-**Résultat attendu** :
+**Rsultat attendu** :
 ```
   You can now view your Streamlit app in your browser.
 
@@ -884,66 +884,66 @@ Ouvrir le navigateur sur http://localhost:8501
 
 #### Interface du Dashboard
 
-**Sidebar (Barre latérale)** :
-- 🔍 Filtres :
-  - Sélection du département
+**Sidebar (Barre latrale)** :
+-  Filtres :
+  - Slection du dpartement
   - Plage IAR (min-max)
   - Plage de prix (min-max)
-- 📊 Options d'affichage
+-  Options d'affichage
 
 **Onglets Principaux** :
 
-1. **📈 Vue d'ensemble**
+1. ** Vue d'ensemble**
    - Top 10 communes par IAR (bar chart)
    - Statistiques globales
    - Carte de France (si disponible)
 
-2. **🔍 Analyse Détaillée**
-   - Corrélation prix vs services (scatter plot)
+2. ** Analyse Dtaille**
+   - Corrlation prix vs services (scatter plot)
    - Distribution des IAR (histogram)
-   - Box plots par région
+   - Box plots par rgion
 
-3. **🗺️ Analyse Géographique**
-   - Rankings départementaux
-   - Comparaison régionale
+3. ** Analyse Gographique**
+   - Rankings dpartementaux
+   - Comparaison rgionale
    - Heatmap
 
-4. **📊 Statistiques**
-   - Tableaux détaillés
-   - Métriques clés
-   - Export de données
+4. ** Statistiques**
+   - Tableaux dtaills
+   - Mtriques cls
+   - Export de donnes
 
-### 9.3 Fonctionnalités du Dashboard
+### 9.3 Fonctionnalits du Dashboard
 
-- **Filtrage interactif** : Filtrer par département, plage IAR, plage de prix
-- **Graphiques dynamiques** : Zoom, pan, hover pour détails
-- **Export** : Télécharger les graphiques en PNG
-- **Cache** : Données mises en cache pendant 10 minutes pour performance
+- **Filtrage interactif** : Filtrer par dpartement, plage IAR, plage de prix
+- **Graphiques dynamiques** : Zoom, pan, hover pour dtails
+- **Export** : Tlcharger les graphiques en PNG
+- **Cache** : Donnes mises en cache pendant 10 minutes pour performance
 
 ---
 
-## 10. Vérification et Dépannage
+## 10. Vrification et Dpannage
 
-### 10.1 Vérifications de Santé
+### 10.1 Vrifications de Sant
 
-#### Vérifier le Data Lake
+#### Vrifier le Data Lake
 
 ```powershell
-# Vérifier la structure
+# Vrifier la structure
 tree data_lake /F
 
-# Vérifier les tailles
+# Vrifier les tailles
 dir data_lake\raw\* -Recurse | Measure-Object -Property Length -Sum
 dir data_lake\silver\* -Recurse | Measure-Object -Property Length -Sum
 ```
 
-#### Vérifier la Base de Données
+#### Vrifier la Base de Donnes
 
 ```powershell
 # Se connecter
 psql -U postgres -d iar_db
 
-# Vérifier les données
+# Vrifier les donnes
 SELECT 
     'dm_commune_iar' as table_name,
     COUNT(*) as row_count
@@ -963,7 +963,7 @@ FROM dm_region_stats;
 \q
 ```
 
-#### Vérifier l'API
+#### Vrifier l'API
 
 ```powershell
 # Health check
@@ -982,70 +982,70 @@ Get-Content logs\feeder_*.txt -Tail 50
 Get-Content logs\processor_*.txt -Tail 50
 Get-Content logs\datamart_*.txt -Tail 50
 
-# Logs de l'API (si configuré)
+# Logs de l'API (si configur)
 Get-Content logs\api.txt -Tail 50
 ```
 
-### 10.3 Problèmes Courants
+### 10.3 Problmes Courants
 
-#### Problème 1 : "Module not found"
+#### Problme 1 : "Module not found"
 
-**Cause** : Environnement virtuel non activé ou dépendances manquantes
+**Cause** : Environnement virtuel non activ ou dpendances manquantes
 
 **Solution** :
 ```powershell
 # Activer l'environnement
 venv\Scripts\activate
 
-# Réinstaller les dépendances
+# Rinstaller les dpendances
 pip install -r requirements.txt
 ```
 
-#### Problème 2 : "Database connection failed"
+#### Problme 2 : "Database connection failed"
 
-**Cause** : PostgreSQL non démarré ou mauvais credentials
+**Cause** : PostgreSQL non dmarr ou mauvais credentials
 
 **Solution** :
 ```powershell
-# Vérifier le service PostgreSQL
+# Vrifier le service PostgreSQL
 Get-Service postgresql*
 
-# Démarrer PostgreSQL si nécessaire
+# Dmarrer PostgreSQL si ncessaire
 Start-Service postgresql-x64-13
 
-# Vérifier les credentials dans config/app.yaml
+# Vrifier les credentials dans config/app.yaml
 ```
 
-#### Problème 3 : "Spark submit failed"
+#### Problme 3 : "Spark submit failed"
 
-**Cause** : Java non installé ou JAVA_HOME non défini
+**Cause** : Java non install ou JAVA_HOME non dfini
 
 **Solution** :
 ```powershell
-# Vérifier Java
+# Vrifier Java
 java -version
 
-# Définir JAVA_HOME (adapter le chemin)
+# Dfinir JAVA_HOME (adapter le chemin)
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
 ```
 
-#### Problème 4 : "File not found" (données)
+#### Problme 4 : "File not found" (donnes)
 
-**Cause** : Fichiers de données manquants
+**Cause** : Fichiers de donnes manquants
 
 **Solution** :
 ```powershell
-# Vérifier la présence des fichiers
+# Vrifier la prsence des fichiers
 dir full.xlsx
 dir "document BPE24.xlsx"
 dir v_commune_2024.csv
 
-# Les placer à la racine du projet si nécessaire
+# Les placer  la racine du projet si ncessaire
 ```
 
-#### Problème 5 : "Port already in use"
+#### Problme 5 : "Port already in use"
 
-**Cause** : Port 8000 ou 8501 déjà utilisé
+**Cause** : Port 8000 ou 8501 dj utilis
 
 **Solution** :
 ```powershell
@@ -1059,9 +1059,9 @@ taskkill /PID <PID> /F
 python -m uvicorn api.app:app --port 8001
 ```
 
-#### Problème 6 : "Token expired"
+#### Problme 6 : "Token expired"
 
-**Cause** : Token JWT expiré (durée : 60 minutes)
+**Cause** : Token JWT expir (dure : 60 minutes)
 
 **Solution** :
 ```powershell
@@ -1073,14 +1073,14 @@ $token = $response.access_token
 
 ### 10.4 Monitoring Spark
 
-Pendant l'exécution des jobs Spark, accéder à :
+Pendant l'excution des jobs Spark, accder  :
 
 ```
 http://localhost:4040
 ```
 
 **Informations disponibles** :
-- Jobs en cours et terminés
+- Jobs en cours et termins
 - Stages et tasks
 - Storage (cache)
 - Environment
@@ -1089,17 +1089,17 @@ http://localhost:4040
 
 ---
 
-## 📝 Récapitulatif des Commandes
+##  Rcapitulatif des Commandes
 
 ### Installation
 ```powershell
-cd "c:\Users\33601\Desktop\Projetèfinal"
+cd "c:\Users\33601\Desktop\Projetfinal"
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Base de Données
+### Base de Donnes
 ```powershell
 createdb iar_db
 psql -U postgres -d iar_db -f src\sql\create_tables.sql
@@ -1138,49 +1138,50 @@ Invoke-RestMethod -Uri "http://localhost:8000/communes?page=1&size=10" -Headers 
 
 ---
 
-## 🎯 Checklist de Lancement
+##  Checklist de Lancement
 
-- [ ] Python 3.9+ installé
-- [ ] Java 8+ installé
-- [ ] PostgreSQL 13+ installé
-- [ ] Dépendances Python installées
-- [ ] Base de données `iar_db` créée
-- [ ] Tables PostgreSQL initialisées
-- [ ] Fichiers de données présents (full.xlsx, document BPE24.xlsx, v_commune_2024.csv)
-- [ ] RAW Layer exécuté avec succès
-- [ ] SILVER Layer exécuté avec succès
-- [ ] GOLD Layer exécuté avec succès
-- [ ] Données chargées dans PostgreSQL
-- [ ] API démarrée sur http://localhost:8000
+- [ ] Python 3.9+ install
+- [ ] Java 8+ install
+- [ ] PostgreSQL 13+ install
+- [ ] Dpendances Python installes
+- [ ] Base de donnes `iar_db` cre
+- [ ] Tables PostgreSQL initialises
+- [ ] Fichiers de donnes prsents (full.xlsx, document BPE24.xlsx, v_commune_2024.csv)
+- [ ] RAW Layer excut avec succs
+- [ ] SILVER Layer excut avec succs
+- [ ] GOLD Layer excut avec succs
+- [ ] Donnes charges dans PostgreSQL
+- [ ] API dmarre sur http://localhost:8000
 - [ ] Authentification JWT fonctionnelle
-- [ ] Endpoints API testés
-- [ ] Dashboard démarré sur http://localhost:8501
+- [ ] Endpoints API tests
+- [ ] Dashboard dmarr sur http://localhost:8501
 - [ ] Visualisations fonctionnelles
 
 ---
 
-## 📚 Ressources Supplémentaires
+##  Ressources Supplmentaires
 
 - **README.md** : Vue d'ensemble du projet
-- **QUICKSTART.md** : Guide de démarrage rapide
-- **docs/architecture.md** : Architecture détaillée
-- **docs/data_dictionary.md** : Dictionnaire de données
-- **docs/api_doc.md** : Documentation API complète
+- **QUICKSTART.md** : Guide de dmarrage rapide
+- **docs/architecture.md** : Architecture dtaille
+- **docs/data_dictionary.md** : Dictionnaire de donnes
+- **docs/api_doc.md** : Documentation API complte
 - **docs/rapport.md** : Rapport technique complet
 
 ---
 
-## 🎉 Félicitations !
+##  Flicitations !
 
-Vous avez maintenant une plateforme Big Data complète et fonctionnelle pour analyser l'attractivité des communes françaises !
+Vous avez maintenant une plateforme Big Data complte et fonctionnelle pour analyser l'attractivit des communes franaises !
 
-**Prochaines étapes suggérées** :
-1. Explorer les données via le dashboard
-2. Créer des analyses personnalisées avec l'API
+**Prochaines tapes suggres** :
+1. Explorer les donnes via le dashboard
+2. Crer des analyses personnalises avec l'API
 3. Ajuster les poids IAR selon vos besoins
-4. Déployer en production (optionnel)
-5. Créer une vidéo de démonstration
+4. Dployer en production (optionnel)
+5. Crer une vido de dmonstration
 
 ---
 
 **Support** : Pour toute question, consulter les logs dans `logs/` et la documentation dans `docs/`
+

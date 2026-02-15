@@ -1,42 +1,42 @@
-﻿# Big Data IAR Platform - Indice d'Attractivité Rationnelle
+﻿# Big Data IAR Platform - Indice d'Attractivit Rationnelle
 
 [![GitHub](https://img.shields.io/badge/GitHub-Projet_Big_Data-blue?logo=github)](https://github.com/dannyyounes7-pixel/Projet_Big_Data)
 
-> **🔗 Dépôt GitHub** : [https://github.com/dannyyounes7-pixel/Projet_Big_Data](https://github.com/dannyyounes7-pixel/Projet_Big_Data)
+> ** Dpt GitHub** : [https://github.com/dannyyounes7-pixel/Projet_Big_Data](https://github.com/dannyyounes7-pixel/Projet_Big_Data)
 
-Plateforme Big Data pour analyser les communes françaises et identifier celles offrant le meilleur rapport **services de proximité / prix immobilier**.
+Plateforme Big Data pour analyser les communes franaises et identifier celles offrant le meilleur rapport **services de proximit / prix immobilier**.
 
 ## Objectif
 
-Construire une plateforme Big Data complète basée sur une architecture médaillon (RAW → SILVER → GOLD) pour :
-- Estimer les prix immobiliers au m² par commune (données DVF 2024)
-- Mesurer la densité des services/équipements de proximité (données BPE 2024)
+Construire une plateforme Big Data complte base sur une architecture mdaillon (RAW  SILVER  GOLD) pour :
+- Estimer les prix immobiliers au m par commune (donnes DVF 2024)
+- Mesurer la densit des services/quipements de proximit (donnes BPE 2024)
 - Calculer un indice IAR combinant ces deux dimensions
-- Exposer les résultats via une API REST sécurisée (JWT)
-- Visualiser les données avec des graphiques interactifs
+- Exposer les rsultats via une API REST scurise (JWT)
+- Visualiser les donnes avec des graphiques interactifs
 
 ## Formule IAR
 
 ```
-IAR = 0.7 × services_normalisés + 0.3 × (1 - prix_normalisés)
+IAR = 0.7  services_normaliss + 0.3  (1 - prix_normaliss)
 ```
 
-- **IAR proche de 1** : Commune attractive (services élevés, prix raisonnables)
-- **IAR proche de 0** : Commune moins attractive (services faibles ou prix élevés)
+- **IAR proche de 1** : Commune attractive (services levs, prix raisonnables)
+- **IAR proche de 0** : Commune moins attractive (services faibles ou prix levs)
 
-## Architecture Médaillon
+## Architecture Mdaillon
 
 ```
 SOURCE (DVF + BPE + Communes)
-   ↓
-RAW (données brutes partitionnées par date)
-   ↓
-SILVER (données nettoyées, validées, enrichies)
-   ↓
+   
+RAW (donnes brutes partitionnes par date)
+   
+SILVER (donnes nettoyes, valides, enrichies)
+   
 GOLD (datamarts PostgreSQL)
-   ↓
+   
 API REST (JWT + pagination)
-   ↓
+   
 Visualisation (Streamlit)
 ```
 
@@ -44,42 +44,42 @@ Visualisation (Streamlit)
 
 ```
 bigdata-iar/
-├── config/              # Fichiers de configuration
-│   ├── app.yaml
-│   ├── spark.yaml
-│   ├── api.yaml
-│   └── logging.yaml
-├── src/
-│   ├── common/          # Utilitaires partagés
-│   ├── jobs/            # Jobs Spark (feeder, processor, datamart)
-│   └── sql/             # Scripts SQL
-├── api/                 # API REST FastAPI
-│   ├── routes/
-│   └── schemas.py
-├── viz/                 # Dashboard Streamlit
-├── scripts/             # Scripts d'exécution
-├── logs/                # Logs des jobs
-└── docs/                # Documentation
+ config/              # Fichiers de configuration
+    app.yaml
+    spark.yaml
+    api.yaml
+    logging.yaml
+ src/
+    common/          # Utilitaires partags
+    jobs/            # Jobs Spark (feeder, processor, datamart)
+    sql/             # Scripts SQL
+ api/                 # API REST FastAPI
+    routes/
+    schemas.py
+ viz/                 # Dashboard Streamlit
+ scripts/             # Scripts d'excution
+ logs/                # Logs des jobs
+ docs/                # Documentation
 ```
 
 ## Installation
 
-### Prérequis
+### Prrequis
 
 - Python 3.9+
 - PostgreSQL 13+
 - Java 8+ (pour Spark)
 
-### Installation des dépendances
+### Installation des dpendances
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Configuration de la base de données
+### Configuration de la base de donnes
 
 ```bash
-# Créer la base de données
+# Crer la base de donnes
 createdb iar_db
 
 # Initialiser les tables
@@ -88,19 +88,19 @@ createdb iar_db
 
 ## Utilisation
 
-### 1. Ingestion des données (RAW)
+### 1. Ingestion des donnes (RAW)
 
 ```bash
 spark-submit src/jobs/feeder.py --config config/app.yaml --run_date 2024-02-14
 ```
 
-### 2. Traitement des données (SILVER)
+### 2. Traitement des donnes (SILVER)
 
 ```bash
 spark-submit src/jobs/processor.py --config config/app.yaml --run_date 2024-02-14
 ```
 
-### 3. Création des datamarts (GOLD)
+### 3. Cration des datamarts (GOLD)
 
 ```bash
 spark-submit src/jobs/datamart.py --config config/app.yaml --run_date 2024-02-14
@@ -136,7 +136,7 @@ GET /communes/{code_commune}
 GET /communes?dep=75&page=1&size=50
 ```
 
-### Départements
+### Dpartements
 
 ```bash
 GET /departements/{dep}/top?n=10
@@ -154,35 +154,35 @@ GET /stats/regions
 
 Le dashboard Streamlit propose :
 1. **Top 10 communes par IAR** (bar chart)
-2. **Corrélation prix vs services** (scatter plot)
-3. **Rankings départementaux** (bar chart)
+2. **Corrlation prix vs services** (scatter plot)
+3. **Rankings dpartementaux** (bar chart)
 
 ## Documentation
 
-- [Architecture détaillée](docs/architecture.md)
-- [Dictionnaire de données](docs/data_dictionary.md)
+- [Architecture dtaille](docs/architecture.md)
+- [Dictionnaire de donnes](docs/data_dictionary.md)
 - [Documentation API](docs/api_doc.md)
 - [Rapport complet](docs/rapport.md)
 
 ## Technologies
 
 - **Big Data**: Apache Spark (PySpark 3.5)
-- **Base de données**: PostgreSQL
+- **Base de donnes**: PostgreSQL
 - **API**: FastAPI + JWT
 - **Visualisation**: Streamlit + Plotly
 - **Format**: Parquet (compression Snappy)
 
-## Sources de Données
+## Sources de Donnes
 
-- **DVF 2024** : Demandes de Valeurs Foncières (transactions immobilières)
-- **BPE 2024** : Base Permanente des Équipements (INSEE)
-- **Référentiel communes** : v_commune_2024.csv
+- **DVF 2024** : Demandes de Valeurs Foncires (transactions immobilires)
+- **BPE 2024** : Base Permanente des quipements (INSEE)
+- **Rfrentiel communes** : v_commune_2024.csv
 
 ## Notes Importantes
 
-- Les fichiers de données volumineux (*.xlsx) ne sont pas versionnés
-- Ils doivent être placés à la racine du projet
-- Le Data Lake est créé automatiquement lors de l'exécution
+- Les fichiers de donnes volumineux (*.xlsx) ne sont pas versionns
+- Ils doivent tre placs  la racine du projet
+- Le Data Lake est cr automatiquement lors de l'excution
 
 ## Auteurs
 
@@ -190,4 +190,5 @@ Projet Big Data Framework - IAR Platform
 
 ## Licence
 
-Projet académique
+Projet acadmique
+
