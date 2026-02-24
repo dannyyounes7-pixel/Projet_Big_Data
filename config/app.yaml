@@ -16,8 +16,8 @@ data_lake:
 
 # Source Data Files
 source_data:
-  dvf_file: "full.xlsx"
-  bpe_file: "document BPE24.xlsx"
+  dvf_file: "full.csv.gz"
+  bpe_file: "BPE24.zip"
   communes_file: "v_commune_2024.csv"
 
 # Database Configuration

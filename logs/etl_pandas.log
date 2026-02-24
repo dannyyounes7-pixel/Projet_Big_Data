@@ -1,0 +1,18 @@
+2026-02-15 23:05:12,755 - etl_pandas - INFO - Starting Pandas ETL...
+2026-02-15 23:05:12,758 - etl_pandas - INFO - Reading DVF: full.csv.gz
+2026-02-15 23:05:14,030 - etl_pandas - INFO - DVF: Processed chunk 0
+2026-02-15 23:05:16,776 - etl_pandas - INFO - DVF: Processed chunk 2
+2026-02-15 23:05:19,426 - etl_pandas - INFO - DVF: Processed chunk 4
+2026-02-15 23:05:21,942 - etl_pandas - INFO - DVF: Processed chunk 6
+2026-02-15 23:05:21,961 - etl_pandas - INFO - DVF loaded and filtered: 1000085 rows
+2026-02-15 23:05:22,340 - etl_pandas - INFO - DVF after outlier removal: 980135 rows
+2026-02-15 23:05:22,448 - etl_pandas - INFO - DVF aggregated: 30538 communes
+2026-02-15 23:05:22,449 - etl_pandas - INFO - Processing BPE: BPE24.zip
+2026-02-15 23:06:15,125 - etl_pandas - INFO - BPE aggregated: 29993 communes
+2026-02-15 23:06:15,129 - etl_pandas - INFO - Joining Datasets...
+2026-02-15 23:06:15,273 - etl_pandas - INFO - Calculating IAR...
+2026-02-15 23:06:15,306 - etl_pandas - INFO - Creating Department Stats...
+2026-02-15 23:06:15,329 - etl_pandas - INFO - Loading to Database...
+2026-02-15 23:06:20,636 - etl_pandas - INFO - Loaded dm_commune_iar: 34001 rows
+2026-02-15 23:06:20,722 - etl_pandas - INFO - Loaded dm_dep_stats: 102 rows
+2026-02-15 23:06:20,722 - etl_pandas - INFO - ETL Completed Successfully!

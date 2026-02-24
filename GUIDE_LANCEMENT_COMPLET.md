@@ -263,89 +263,86 @@ Rfrentiel des communes :
 
 ## 5. Excution du Pipeline Big Data
 
-Le pipeline se compose de 3 tapes principales qui transforment les donnes brutes en datamarts exploitables.
+Le pipeline suit l'architecture **Medallion** (Bronze → Silver → Gold) et s'excute via un script orchestrateur unique.
 
-### 5.1 tape 1 : RAW Layer (Feeder)
+### 5.1 Excution complte du pipeline
 
-Cette tape charge les donnes sources et les convertit en format Parquet.
+Une seule commande lance les 3 couches squentiellement :
 
 ```powershell
-# Excuter le feeder
-scripts\run_feeder.bat
+# Excuter le pipeline complet
+$env:PYTHONPATH="."; python scripts\run_pipeline.py
 ```
 
 **Ce qui se passe** :
-1. Lecture des fichiers Excel et CSV
-2. Conversion en format Parquet (compression Snappy)
-3. Partitionnement par date d'excution
-4. Sauvegarde dans `data_lake/raw/`
 
-**Dure estime** : 5-10 minutes
+**tape 1 - BRONZE Layer** (`scripts\etl_bronze.py`) :
+1. Lecture des fichiers source (DVF, BPE, Communes)
+2. Conversion en format Parquet (compression Snappy)
+3. Sauvegarde dans `data/bronze/`
+
+**tape 2 - SILVER Layer** (`scripts\etl_silver.py`) :
+1. Filtrage des transactions valides (prix entre 10 et 20 000 €/m²)
+2. Calcul des prix moyens par commune
+3. Agrégation des quipements par catgorie
+4. Jointure DVF + BPE + Rfrentiel (LEFT JOIN pour garder toutes les communes)
+5. Sauvegarde dans `data/silver/communes_enriched.parquet`
+
+**tape 3 - GOLD Layer** (`scripts\etl_gold.py`) :
+1. Normalisation par rang percentile (distribution uniforme 0-1)
+2. Calcul IAR = 0.7 × Services + 0.3 × (1 - Prix)
+3. Calcul des statistiques dpartementales
+4. Chargement dans PostgreSQL (`dm_commune_iar`, `dm_dep_stats`)
+
+**Dure estime** : 2-3 minutes
 
 **Rsultat attendu** :
 ```
-==========================================
-Starting RAW Layer Feeder
-==========================================
-[INFO] Reading DVF data from full.xlsx...
-[INFO] Reading BPE data from document BPE24.xlsx...
-[INFO] Reading communes data from v_commune_2024.csv...
-[INFO] Writing to data_lake/raw/dvf/run_date=2024-02-15/
-[INFO] Writing to data_lake/raw/bpe/run_date=2024-02-15/
-[INFO] Writing to data_lake/raw/ref_communes/run_date=2024-02-15/
-[SUCCESS] Feeder completed successfully!
+🚀 Starting IAR Data Pipeline (Medallion Architecture)...
+
+--- STEP 1: BRONZE LAYER (Ingestion) ---
+2026-02-16 01:00:00 - etl_bronze - INFO - Ingesting DVF: full.csv.gz
+2026-02-16 01:00:15 - etl_bronze - INFO - Saved DVF Bronze: data/bronze/dvf.parquet (3489149 rows)
+2026-02-16 01:00:15 - etl_bronze - INFO - Ingesting BPE: BPE24.zip
+2026-02-16 01:01:30 - etl_bronze - INFO - Saved BPE Bronze: data/bronze/bpe.parquet
+
+--- STEP 2: SILVER LAYER (Cleaning & Enrichment) ---
+2026-02-16 01:01:31 - etl_silver - INFO - Filtered 15432 outliers (Prices < 10 or > 20,000)
+2026-02-16 01:01:45 - etl_silver - INFO - Saved Silver Layer: data/silver/communes_enriched.parquet (37544 rows)
+
+--- STEP 3: GOLD LAYER (Aggregation & Serving) ---
+2026-02-16 01:01:46 - etl_gold - INFO - Applied Rank-Based Normalization (0-1 Uniform Distribution)
+2026-02-16 01:02:00 - etl_gold - INFO - Loaded dm_commune_iar: 37544 rows
+2026-02-16 01:02:01 - etl_gold - INFO - Loaded dm_dep_stats: 101 rows
+
+✅ Pipeline Completed Successfully in 123.31 seconds.
 ```
 
 **Vrification** :
 ```powershell
-# Vrifier la cration du Data Lake
-dir data_lake\raw\
+# Vrifier la cration des couches
+dir data\bronze\     # DVF, BPE, Communes en Parquet
+dir data\silver\     # communes_enriched.parquet
+
+# Vrifier le nombre de communes dans PostgreSQL
+$env:PYTHONPATH="."; python scripts\count_communes.py
 ```
 
-Vous devriez voir 3 dossiers : `dvf`, `bpe`, `ref_communes`
+**Rsultat attendu** : `Total communes in DB: 37544`
 
-### 5.2 tape 2 : SILVER Layer (Processor)
+### 5.2 Excution manuelle par couche (optionnel)
 
-Cette tape nettoie, valide et enrichit les donnes.
+Si vous souhaitez excuter les couches sparment (debug, dveloppement) :
 
 ```powershell
-# Excuter le processor
-scripts\run_processor.bat
-```
+# Bronze uniquement
+$env:PYTHONPATH="."; python scripts\etl_bronze.py
 
-**Ce qui se passe** :
-1. **DVF** :
-   - Filtrage des transactions valides (maisons et appartements)
-   - Calcul du prix au m
-   - Suppression des outliers (1er et 99e percentile)
-   - Calcul du prix mdian par commune
+# Silver uniquement (ncessite Bronze)
+$env:PYTHONPATH="."; python scripts\etl_silver.py
 
-2. **BPE** :
-   - Comptage des quipements par commune
-   - Calcul de la densit de services
-
-3. **Jointure** :
-   - Fusion DVF + BPE + Communes
-   - Normalisation des valeurs (0-1)
-   - Calcul de l'IAR
-
-**Dure estime** : 10-20 minutes
-
-**Rsultat attendu** :
-```
-==========================================
-Starting SILVER Layer Processor
-==========================================
-[INFO] Processing DVF data...
-[INFO] Filtering valid transactions...
-[INFO] Calculating prix_m2...
-[INFO] Removing outliers...
-[INFO] Processing BPE data...
-[INFO] Counting equipment by commune...
-[INFO] Joining datasets...
-[INFO] Calculating IAR...
-[INFO] Writing to data_lake/silver/joined/
-[SUCCESS] Processor completed successfully!
+# Gold uniquement (ncessite Silver)
+$env:PYTHONPATH="."; python scripts\etl_gold.py
 ```
 
 **Vrification** :
@@ -867,7 +864,9 @@ Write-Host " Donnes exportes dans communes_iar.csv"
 
 ```powershell
 # Lancer le dashboard
-streamlit run viz\dashboard.py
+streamlit run viz\app_frontend.py
+# OU
+python -m streamlit run viz\app_frontend.py --server.port 8501
 ```
 
 **Rsultat attendu** :
@@ -878,9 +877,13 @@ streamlit run viz\dashboard.py
   Network URL: http://192.168.1.x:8501
 ```
 
-### 9.2 Utiliser le Dashboard
+### 9.2 Accéder au Dashboard
 
-Ouvrir le navigateur sur http://localhost:8501
+**Lien Local** : **http://localhost:8501**
+
+Le dashboard s'ouvre automatiquement dans votre navigateur. Si ce n'est pas le cas, ouvrez manuellement l'URL ci-dessus.
+
+### 9.3 Utiliser le Dashboard
 
 #### Interface du Dashboard
 
@@ -905,6 +908,7 @@ Ouvrir le navigateur sur http://localhost:8501
 
 3. ** Analyse Gographique**
    - Rankings dpartementaux
+   
    - Comparaison rgionale
    - Heatmap
 

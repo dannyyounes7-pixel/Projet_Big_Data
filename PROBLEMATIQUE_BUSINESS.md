@@ -279,6 +279,7 @@ La plateforme IAR répond à un besoin réel du marché en fournissant une analy
 
 ## Auteurs
 
-**Nawfel Chakib Younes** et **Yacine Bakour**
+- **Nawfel Chakib Younes** - [@dannyyounes7-pixel](https://github.com/dannyyounes7-pixel)
+- **Yacine Bakour** - [@ybakour09-tech](https://github.com/ybakour09-tech)
 
 Projet Big Data Framework - IAR Platform

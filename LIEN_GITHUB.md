@@ -2,7 +2,7 @@
 
 ## Dépôt GitHub
 
-**URL du projet** : https://github.com/dannyyounes7-pixel/Projet_Big_Data
+**URL du projet** : https://github.com/ybakour09-tech/Projet_Big_Data
 
 
 ### Documentation Disponible
@@ -100,11 +100,14 @@ streamlit run viz/dashboard.py
 
 ## Auteurs
 
-**Nawfel Chakib Younes** et **Yacine Bakour**
+- **Nawfel Chakib Younes** - [@dannyyounes7-pixel](https://github.com/dannyyounes7-pixel)
+- **Yacine Bakour** - [@ybakour09-tech](https://github.com/ybakour09-tech)
 
 ---
 
 ## Contact
 
-**GitHub** : https://github.com/dannyyounes7-pixel  
-**Dépôt** : https://github.com/dannyyounes7-pixel/Projet_Big_Data
+**Dépôt Officiel** : https://github.com/ybakour09-tech/Projet_Big_Data  
+**Contributeurs** :
+- https://github.com/dannyyounes7-pixel
+- https://github.com/ybakour09-tech

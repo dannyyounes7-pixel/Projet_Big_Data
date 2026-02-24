@@ -23,7 +23,7 @@ class CommuneIAR(BaseModel):
     nom_commune: Optional[str]
     dep: Optional[str]
     reg: Optional[str]
-    prix_m2: Optional[float]
+    prix_m2_moyen: Optional[float]
     nb_ventes: Optional[int]
     prix_m2_min: Optional[float]
     prix_m2_max: Optional[float]

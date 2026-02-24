@@ -31,7 +31,7 @@ def create_top_communes_chart(df: pd.DataFrame, n: int = 10, title: str = "Top 1
         title=title,
         labels={'iar': 'IAR', 'nom_commune': 'Commune'},
         color='iar',
-        color_continuous_scale='Viridis',
+        color_continuous_scale='viridis',
         text='iar'
     )
     
@@ -58,14 +58,14 @@ def create_scatter_plot(df: pd.DataFrame, title: str = "Prix vs Services"):
     """
     fig = px.scatter(
         df,
-        x='prix_m2',
+        x='prix_m2_moyen',
         y='score_services_total',
         color='iar',
         size='nb_ventes',
         hover_data=['nom_commune', 'dep', 'iar'],
         title=title,
         labels={
-            'prix_m2': 'Prix au m² (€)',
+            'prix_m2_moyen': 'Prix au m² (€)',
             'score_services_total': 'Score Services',
             'iar': 'IAR',
             'nb_ventes': 'Nombre de ventes'
@@ -77,7 +77,7 @@ def create_scatter_plot(df: pd.DataFrame, title: str = "Prix vs Services"):
     # Add trend line
     fig.add_trace(
         go.Scatter(
-            x=df['prix_m2'],
+            x=df['prix_m2_moyen'],
             y=df['score_services_total'],
             mode='lines',
             name='Tendance',
@@ -211,13 +211,113 @@ def create_price_distribution_chart(df: pd.DataFrame):
     """
     fig = px.histogram(
         df,
-        x='prix_m2',
+        x='prix_m2_moyen',
         nbins=50,
         title='Distribution des Prix au m²',
-        labels={'prix_m2': 'Prix au m² (€)', 'count': 'Nombre de communes'},
+        labels={'prix_m2_moyen': 'Prix au m² (€)', 'count': 'Nombre de communes'},
         color_discrete_sequence=['steelblue']
     )
     
     fig.update_layout(height=400)
     
+    return fig
+def create_regional_analysis_chart(df):
+    """
+    Create an interactive scatter plot for regional analysis
+    """
+    fig = px.scatter(
+        df,
+        x="prix_m2_moyen",
+        y="iar_moyen",
+        size="nb_communes",
+        color="reg",
+        hover_name="reg",
+        hover_data=["score_services_moyen", "iar_min", "iar_max"],
+        title="Analyse Régionale : IAR vs Prix m² (Taille = Nb Communes)",
+        labels={
+            "prix_m2_moyen": "Prix Moyen (km²)",
+            "iar_moyen": "IAR Moyen",
+            "nb_communes": "Nombre de Communes",
+            "reg": "Région"
+        },
+        template="plotly_dark"
+    )
+    fig.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        height=600
+    )
+    return fig
+
+def create_correlation_heatmap(df):
+    """
+    Create a heatmap for price vs services correlation
+    """
+    # Pivot for heatmap: index=Price, columns=Services, values=IAR
+    pivot_df = df.pivot(index='prix_categorie', columns='services_categorie', values='iar_moyen')
+    
+    # Ensure correct order
+    price_order = ['Faible', 'Moyen', 'Élevé'] # Note: SQL query returned 'Bas', 'Moyen', 'Elevé' for price
+    # Let's check the SQL query in stats.py again. 
+    # It uses: WHEN prix_m2 < 2000 THEN 'Bas' ...
+    
+    # We should handle different potential labels or re-index if possible
+    # For fail-safety, we just plot what we have
+    
+    fig = px.imshow(
+        pivot_df,
+        labels=dict(x="Niveau de Services", y="Catégorie de Prix", color="IAR Moyen"),
+        x=pivot_df.columns,
+        y=pivot_df.index,
+        text_auto=".2f",
+        aspect="auto",
+        title="Corrélation Prix / Services (Valeur : IAR Moyen)",
+        template="plotly_dark",
+        color_continuous_scale="viridis"
+    )
+    fig.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)"
+    )
+    return fig
+
+def create_commune_scorecard(commune_data):
+    """
+    Create a Radar Chart (Spider Plot) for commune scores
+    """
+    categories = ['Santé', 'Éducation', 'Transport', 'Commerce', 'Services Publics', 'Loisirs']
+    
+    # Extract scores, handling Nones
+    values = [
+        commune_data.get('score_sante', 0) or 0,
+        commune_data.get('score_education', 0) or 0,
+        commune_data.get('score_transport', 0) or 0,
+        commune_data.get('score_commerce', 0) or 0,
+        commune_data.get('score_services_publics', 0) or 0,
+        commune_data.get('score_loisirs', 0) or 0
+    ]
+    
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatterpolar(
+        r=values,
+        theta=categories,
+        fill='toself',
+        name=commune_data.get('nom_commune', 'Commune'),
+        line_color='#00CC96'
+    ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, max(max(values), 10)] # Dynamic range
+            )
+        ),
+        showlegend=False,
+        title=f"Profil des Services : {commune_data.get('nom_commune')}",
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
     return fig

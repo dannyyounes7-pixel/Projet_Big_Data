@@ -29,71 +29,78 @@ def get_communes(
     
     Requires JWT authentication
     """
-    db = get_db()
-    
-    # Build query
-    query = "SELECT * FROM dm_commune_iar WHERE 1=1"
-    params = []
-    
-    # Apply filters
-    if dep:
-        query += " AND dep = %s"
-        params.append(dep)
-    
-    if reg:
-        query += " AND reg = %s"
-        params.append(reg)
-    
-    if iar_min is not None:
-        query += " AND iar >= %s"
-        params.append(iar_min)
-    
-    if iar_max is not None:
-        query += " AND iar <= %s"
-        params.append(iar_max)
-    
-    # Get total count
-    count_query = f"SELECT COUNT(*) as total FROM ({query}) as filtered"
-    count_result = db.execute_one(count_query, tuple(params))
-    total_items = count_result['total'] if count_result else 0
-    
-    # Apply sorting
-    sort_mapping = {
-        "iar_desc": "iar DESC",
-        "iar_asc": "iar ASC",
-        "prix_desc": "prix_m2 DESC",
-        "prix_asc": "prix_m2 ASC",
-        "services_desc": "score_services_total DESC",
-        "services_asc": "score_services_total ASC"
-    }
-    
-    order_by = sort_mapping.get(sort, "iar DESC")
-    query += f" ORDER BY {order_by}"
-    
-    # Apply pagination
-    offset = (page - 1) * size
-    query += f" LIMIT %s OFFSET %s"
-    params.extend([size, offset])
-    
-    # Execute query
-    results = db.execute_query(query, tuple(params))
-    
-    # Calculate pagination metadata
-    total_pages = math.ceil(total_items / size)
-    
-    pagination = PaginationMeta(
-        page=page,
-        size=size,
-        total_items=total_items,
-        total_pages=total_pages,
-        has_next=page < total_pages,
-        has_prev=page > 1
-    )
-    
-    return {
-        "data": results,
-        "pagination": pagination
-    }
+    try:
+        db = get_db()
+        
+        # Build query
+        query = "SELECT * FROM dm_commune_iar WHERE 1=1"
+        params = []
+        
+        # Apply filters
+        if dep:
+            query += " AND dep = %s"
+            params.append(dep)
+        
+        if reg:
+            query += " AND reg = %s"
+            params.append(reg)
+        
+        if iar_min is not None:
+            query += " AND iar >= %s"
+            params.append(iar_min)
+        
+        if iar_max is not None:
+            query += " AND iar <= %s"
+            params.append(iar_max)
+        
+        # Get total count
+        count_query = f"SELECT COUNT(*) as total FROM ({query}) as filtered"
+        count_result = db.execute_one(count_query, tuple(params))
+        total_items = count_result['total'] if count_result else 0
+        
+        # Apply sorting
+        sort_mapping = {
+            "iar_desc": "iar DESC",
+            "iar_asc": "iar ASC",
+            "prix_desc": "prix_m2_moyen DESC",
+            "prix_asc": "prix_m2_moyen ASC",
+            "services_desc": "score_services_total DESC",
+            "services_asc": "score_services_total ASC"
+        }
+        
+        order_by = sort_mapping.get(sort, "iar DESC")
+        query += f" ORDER BY {order_by}"
+        
+        # Apply pagination
+        offset = (page - 1) * size
+        query += f" LIMIT %s OFFSET %s"
+        params.extend([size, offset])
+        
+        # Execute query
+        results = db.execute_query(query, tuple(params))
+        
+        # Calculate pagination metadata
+        total_pages = math.ceil(total_items / size)
+        
+        pagination = PaginationMeta(
+            page=page,
+            size=size,
+            total_items=total_items,
+            total_pages=total_pages,
+            has_next=page < total_pages,
+            has_prev=page > 1
+        )
+        
+        return {
+            "data": results,
+            "pagination": pagination
+        }
+    except Exception as e:
+        import traceback
+        with open("last_error.txt", "w") as f:
+            f.write(f"Error: {str(e)}\n")
+            f.write(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{code_commune}", response_model=CommuneIAR)

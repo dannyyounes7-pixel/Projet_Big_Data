@@ -57,21 +57,48 @@ def ingest_dvf(spark: SparkSession, config: dict, run_date: str, logger: logging
     logger.info(f"Reading DVF data from: {dvf_file}")
     
     try:
-        # Read Excel file
-        df_dvf = spark.read.format("com.crealytics.spark.excel") \
-            .option("header", "true") \
-            .option("inferSchema", "true") \
-            .load(dvf_file)
-        
-        # Alternative: use pandas for Excel reading (more reliable)
-        import pandas as pd
-        logger.info("Reading Excel file with pandas...")
-        pdf_dvf = pd.read_excel(dvf_file)
-        df_dvf = spark.createDataFrame(pdf_dvf)
+        # Check file extension
+        if dvf_file.endswith('.csv.gz'):
+            logger.info("Reading compressed CSV file (gzip) with pandas...")
+            import pandas as pd
+            import time
+            
+            start_read = time.time()
+            # Read in chunks to show progress and avoid seeming hung
+            chunk_size = 500000
+            chunks = []
+            total_rows = 0
+            
+            with pd.read_csv(dvf_file, compression='gzip', sep=',', chunksize=chunk_size, low_memory=False, dtype=str) as reader:
+                for i, chunk in enumerate(reader):
+                    total_rows += len(chunk)
+                    chunks.append(chunk)
+                    if i % 2 == 0:
+                        logger.info(f"Read {total_rows:,} rows so far...")
+            
+            logger.info(f"Finished reading {total_rows:,} rows in {time.time() - start_read:.2f} seconds")
+            pdf_dvf = pd.concat(chunks, ignore_index=True)
+            
+            # Convert NaN to None for Spark compatibility
+            pdf_dvf = pdf_dvf.where(pd.notnull(pdf_dvf), None)
+            
+            df_dvf = spark.createDataFrame(pdf_dvf)
+            
+        elif dvf_file.endswith('.xlsx'):
+            # Existing Excel logic
+            import pandas as pd
+            logger.info("Reading Excel file with pandas...")
+            pdf_dvf = pd.read_excel(dvf_file)
+            # Ensure columns are strings to avoid schema issues if mixed types
+            for col in pdf_dvf.columns:
+                if pdf_dvf[col].dtype == 'object':
+                    pdf_dvf[col] = pdf_dvf[col].astype(str)
+            df_dvf = spark.createDataFrame(pdf_dvf)
+        else:
+            raise ValueError(f"Unsupported file format: {dvf_file}")
         
         initial_count = df_dvf.count()
         logger.info(f"DVF records read: {initial_count:,}")
-        logger.info(f"DVF columns: {df_dvf.columns}")
         
         # Get output path with partitioning
         raw_dvf_base = config['data_lake']['raw']['dvf']
@@ -111,15 +138,60 @@ def ingest_bpe(spark: SparkSession, config: dict, run_date: str, logger: logging
     logger.info(f"Reading BPE data from: {bpe_file}")
     
     try:
-        # Read Excel file with pandas (more reliable for large files)
-        import pandas as pd
-        logger.info("Reading Excel file with pandas...")
-        pdf_bpe = pd.read_excel(bpe_file)
-        df_bpe = spark.createDataFrame(pdf_bpe)
+        # Check file extension
+        if bpe_file.endswith('.zip'):
+            logger.info("Handling ZIP file containing CSV...")
+            import zipfile
+            import os
+            import pandas as pd
+            
+            # Extract first
+            with zipfile.ZipFile(bpe_file, 'r') as z:
+                csv_filename = z.namelist()[0]
+                logger.info(f"Extracting {csv_filename} from zip...")
+                z.extract(csv_filename, path='.')
+                extracted_path = csv_filename
+            
+            logger.info(f"Reading extracted CSV {extracted_path} with pandas...")
+            # Use chunks for BPE as well
+            chunk_size = 100000
+            chunks = []
+            total_rows = 0
+            
+            # BPE has semicolon separator usually
+            with pd.read_csv(extracted_path, sep=';', chunksize=chunk_size, low_memory=False, dtype=str) as reader:
+                for i, chunk in enumerate(reader):
+                    total_rows += len(chunk)
+                    chunks.append(chunk)
+                    if i % 5 == 0:
+                        logger.info(f"Read {total_rows:,} rows so far...")
+                        
+            pdf_bpe = pd.concat(chunks, ignore_index=True)
+            pdf_bpe = pdf_bpe.where(pd.notnull(pdf_bpe), None)
+            
+            df_bpe = spark.createDataFrame(pdf_bpe)
+            
+            # Clean up extracted file to save space? Keeping it for now.
+            try:
+                os.remove(extracted_path)
+            except:
+                pass
+            
+        elif bpe_file.endswith('.xlsx'):
+            # Read Excel file with pandas (more reliable for large files)
+            import pandas as pd
+            logger.info("Reading Excel file with pandas...")
+            pdf_bpe = pd.read_excel(bpe_file)
+             # Ensure columns are strings
+            for col in pdf_bpe.columns:
+                if pdf_bpe[col].dtype == 'object':
+                    pdf_bpe[col] = pdf_bpe[col].astype(str)
+            df_bpe = spark.createDataFrame(pdf_bpe)
+        else:
+            raise ValueError(f"Unsupported file format: {bpe_file}")
         
         initial_count = df_bpe.count()
         logger.info(f"BPE records read: {initial_count:,}")
-        logger.info(f"BPE columns: {df_bpe.columns}")
         
         # Get output path with partitioning
         raw_bpe_base = config['data_lake']['raw']['bpe']

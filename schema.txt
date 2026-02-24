@@ -1,0 +1,23 @@
+Table: dm_commune_iar
+  code_commune: text
+  prix_m2_moyen: double precision
+  prix_m2_min: double precision
+  prix_m2_max: double precision
+  nb_ventes: double precision
+  score_commerce: double precision
+  score_education: double precision
+  score_loisirs: double precision
+  score_sante: double precision
+  score_services_publics: double precision
+  score_transport: double precision
+  score_services_total: double precision
+  nb_equipements_total: double precision
+  nom_commune: text
+  dep: text
+  reg: text
+  prix_m2_norm: double precision
+  score_services_norm: double precision
+  iar: double precision
+  rang_national: double precision
+  rang_dep: double precision
+  rang_reg: double precision
